@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_item_list"
+    android:elevation="30dp">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="65dp"
+        android:layout_margin="15dp"
+        android:background="@drawable/bg_image_film"
+        android:contentDescription="@string/image_of_film"
+        android:scaleType="centerCrop"
+        tools:ignore="ImageContrastCheck"
+        tools:src="@tools:sample/avatars" />
+
+    <TextView
+        android:layout_width="184dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="26dp"
+        android:fontFamily="@font/roboto_bold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        tools:text="gachi" />
+
+    <TextView
+        android:layout_width="184dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/genre"
+        android:textSize="14sp"
+        tools:text="gachi" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="300dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/favorite_film"
+        tools:src="@drawable/ic_baseline_star_24" />
+</FrameLayout>

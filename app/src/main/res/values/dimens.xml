@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  List Fragment  -->
+    <dimen name="side_borders">16dp</dimen>
+    <dimen name="bottom_border">16dp</dimen>
+    <dimen name="top_border">33dp</dimen>
+
+    <!--  Description Fragment  -->
+    <dimen name="top_border_description">33dp</dimen>
+    <dimen name="side_border_description">32dp</dimen>
+</resources>
