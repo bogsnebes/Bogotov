@@ -14,20 +14,32 @@ class MainActivity : AppCompatActivity() {
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val currentFragment =
-                supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
-            if (currentFragment == null) {
+                supportFragmentManager.findFragmentByTag(ListFragment.TAG)
+            if (currentFragment != null) {
+                val descriptionFragment =
+                    supportFragmentManager.findFragmentByTag(DescriptionFragment.TAG)
+                if (descriptionFragment != null) {
+                    supportFragmentManager.popBackStack()
+                }
+            } else {
                 supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.fragmentContainerView, listFragment)
+                    .add(R.id.fragment_container, listFragment, ListFragment.TAG)
                     .commit()
             }
         } else {
             val currentFragment =
-                supportFragmentManager.findFragmentById(R.id.fragment_container)
-            if (currentFragment == null) {
+                supportFragmentManager.findFragmentByTag(ListFragment.TAG)
+            if (currentFragment != null) {
+                val descriptionFragment =
+                    supportFragmentManager.findFragmentByTag(DescriptionFragment.TAG)
+                if (descriptionFragment != null) {
+                    supportFragmentManager.popBackStack()
+                }
+            } else {
                 supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.fragment_container, listFragment)
+                    .add(R.id.fragment_container, listFragment, ListFragment.TAG)
                     .commit()
             }
         }

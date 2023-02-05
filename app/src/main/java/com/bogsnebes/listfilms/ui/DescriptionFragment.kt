@@ -66,6 +66,7 @@ class DescriptionFragment : Fragment() {
 
     companion object {
         private const val KEY_DESCRIPTION_FILM = "descriptionFilm"
+        const val TAG = "DescriptionFragment"
 
         fun newInstance(descriptionFilm: DescriptionFilmDto): DescriptionFragment {
             val fragment = DescriptionFragment()

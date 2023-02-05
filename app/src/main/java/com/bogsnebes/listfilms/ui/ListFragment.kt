@@ -68,6 +68,7 @@ class ListFragment : Fragment() {
         dataLoadingErrorImageView = view.findViewById(R.id.data_loading_error_image_view)
         dataLoadingErrorTextView = view.findViewById(R.id.data_loading_error_text_view)
         repeatButton = view.findViewById(R.id.repeat_button)
+        notFoundSearchView = view.findViewById(R.id.not_found_search)
 
         recyclerView.layoutManager = LinearLayoutManager(context)
 
@@ -109,12 +110,21 @@ class ListFragment : Fragment() {
         searchEditText.doAfterTextChanged {
             if (it != null) {
                 if (adapter != null) {
-                    val filteredAdapter: ListAdapter =
-                        ListAdapter(
-                            (adapter ?: return@doAfterTextChanged).filterList(it.toString())
-                                .toMutableList()
-                        )
-                    recyclerView.adapter = filteredAdapter
+                    if ((adapter ?: return@doAfterTextChanged).filterList(it.toString())
+                            .isNotEmpty()
+                    ) {
+                        notFoundSearchView.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                        val filteredAdapter: ListAdapter =
+                            ListAdapter(
+                                (adapter ?: return@doAfterTextChanged).filterList(it.toString())
+                                    .toMutableList()
+                            )
+                        recyclerView.adapter = filteredAdapter
+                    } else {
+                        notFoundSearchView.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
                 }
             } else {
                 recyclerView.adapter = adapter
@@ -139,6 +149,7 @@ class ListFragment : Fragment() {
                 }
                 is FilmsScreenState.Result -> {
                     hideError()
+                    progressBar.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
                     adapter = ListAdapter(filmsScreenState.items.toMutableList())
                     recyclerView.adapter = adapter
@@ -150,6 +161,10 @@ class ListFragment : Fragment() {
         }
 
         filmViewModel.descriptionScreenState.observe(viewLifecycleOwner) { descriptionScreenState ->
+            val fragmentManager =
+                (context as AppCompatActivity).supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+
             when (descriptionScreenState) {
                 is DescriptionScreenState.Loading -> {
                     recyclerView.visibility = View.GONE
@@ -157,25 +172,36 @@ class ListFragment : Fragment() {
                 }
                 is DescriptionScreenState.Result -> {
                     val fragment = DescriptionFragment.newInstance(descriptionScreenState.item)
-                    val fragmentManager =
-                        (context as AppCompatActivity).supportFragmentManager
-                    val fragmentTransaction = fragmentManager.beginTransaction()
                     if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                         if (fragmentManager.findFragmentById(R.id.fragmentContainerView2) == null) {
-                            fragmentTransaction.add(R.id.fragmentContainerView2, fragment)
+                            fragmentTransaction.add(
+                                R.id.fragmentContainerView2,
+                                fragment,
+                                DescriptionFragment.TAG
+                            )
                         } else {
-                            fragmentTransaction.replace(R.id.fragmentContainerView2, fragment)
+                            fragmentTransaction.replace(
+                                R.id.fragmentContainerView2,
+                                fragment,
+                                DescriptionFragment.TAG
+                            )
                         }
                         fragmentTransaction.addToBackStack(null)
                         fragmentTransaction.commit()
                     } else {
-                        fragmentTransaction.replace(R.id.fragment_container, fragment)
+                        fragmentTransaction.replace(
+                            R.id.fragment_container,
+                            fragment,
+                            DescriptionFragment.TAG
+                        )
                         fragmentTransaction.addToBackStack(null)
                         fragmentTransaction.commit()
                     }
                     filmViewModel.descriptionStateNotWorking()
                 }
                 is DescriptionScreenState.Error -> {
+                    recyclerView.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
                     Toast.makeText(context, "Ошибка подключения", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
@@ -289,6 +315,8 @@ class ListFragment : Fragment() {
         private const val KEY_SEARCH_STATE = "search state"
         private const val KEY_FAVORITES_STATE = "favorites state"
         private const val KEY_SEARCH_QUERY = "searchQuery"
+
+        const val TAG = "ListFragment"
 
         fun newInstance(): ListFragment = ListFragment()
     }

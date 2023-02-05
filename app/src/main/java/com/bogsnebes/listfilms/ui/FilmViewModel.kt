@@ -15,6 +15,8 @@ class FilmViewModel : ViewModel() {
         Log.d(TAG, "${FilmViewModel::class.java} initialized")
     }
 
+    private var cacheOfFilms = mutableListOf<FilmCard>()
+
     private var _filmsScreenState: MutableLiveData<FilmsScreenState> = MutableLiveData()
     val filmsScreenState: LiveData<FilmsScreenState>
         get() = _filmsScreenState
@@ -44,8 +46,12 @@ class FilmViewModel : ViewModel() {
                     )
                 }
                 _filmsScreenState.value = FilmsScreenState.Result(filmCards)
+                cacheOfFilms.addAll(filmCards)
             }, { error ->
-                _filmsScreenState.value = FilmsScreenState.Error(error)
+                if (cacheOfFilms.isEmpty())
+                    _filmsScreenState.value = FilmsScreenState.Error(error)
+                else
+                    _filmsScreenState.value = FilmsScreenState.Result(cacheOfFilms)
             })
             .addTo(compositeDisposable)
     }
