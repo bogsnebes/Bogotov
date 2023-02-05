@@ -144,15 +144,26 @@ class ListFragment : Fragment() {
             when (filmsScreenState) {
                 is FilmsScreenState.Loading -> {
                     hideError()
-                    recyclerView.visibility = View.GONE
-                    progressBar.visibility = View.VISIBLE
+                    if (adapter == null) {
+                        recyclerView.visibility = View.GONE
+                        progressBar.visibility = View.VISIBLE
+                    }
                 }
                 is FilmsScreenState.Result -> {
                     hideError()
                     progressBar.visibility = View.GONE
                     recyclerView.visibility = View.VISIBLE
-                    adapter = ListAdapter(filmsScreenState.items.toMutableList())
-                    recyclerView.adapter = adapter
+                    if (adapter != null) {
+                        val position = adapter?.itemCount
+                        adapter = ListAdapter(filmsScreenState.items.toMutableList())
+                        recyclerView.adapter = adapter
+                        recyclerView.layoutManager?.scrollToPosition(
+                            position?.minus(6) ?: 0
+                        )
+                    } else {
+                        adapter = ListAdapter(filmsScreenState.items.toMutableList())
+                        recyclerView.adapter = adapter
+                    }
                 }
                 is FilmsScreenState.Error -> {
                     displayError()
@@ -259,6 +270,10 @@ class ListFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
             holder.bind(listFilms[position])
+
+            if (position == listFilms.size - 1) {
+                filmViewModel.getFilms()
+            }
         }
 
         override fun getItemCount(): Int {

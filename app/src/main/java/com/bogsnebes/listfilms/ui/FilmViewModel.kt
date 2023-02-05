@@ -16,6 +16,7 @@ class FilmViewModel : ViewModel() {
     }
 
     private var cacheOfFilms = mutableListOf<FilmCard>()
+    private var pageOfFilms = 1
 
     private var _filmsScreenState: MutableLiveData<FilmsScreenState> = MutableLiveData()
     val filmsScreenState: LiveData<FilmsScreenState>
@@ -30,7 +31,7 @@ class FilmViewModel : ViewModel() {
 
     fun getFilms() {
         _filmsScreenState.value = FilmsScreenState.Loading
-        filmsImpl.getFilms()
+        filmsImpl.getFilms(pageOfFilms)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ films ->
@@ -45,8 +46,9 @@ class FilmViewModel : ViewModel() {
                         it.year
                     )
                 }
-                _filmsScreenState.value = FilmsScreenState.Result(filmCards)
                 cacheOfFilms.addAll(filmCards)
+                pageOfFilms++
+                _filmsScreenState.value = FilmsScreenState.Result(cacheOfFilms)
             }, { error ->
                 if (cacheOfFilms.isEmpty())
                     _filmsScreenState.value = FilmsScreenState.Error(error)
